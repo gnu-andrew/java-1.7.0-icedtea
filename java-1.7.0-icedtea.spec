@@ -9,7 +9,8 @@
 %define icedteaver 2.3.14
 %define icedteasnapshot %{nil}
 
-%define icedteaurl http://icedtea.classpath.org/
+%define icedteaurl http://icedtea.classpath.org
+%define openjdkurl http://hg.openjdk.java.net
 
 %define corbachangeset c7d0b72f704f
 %define jaxpchangeset 0eb202593710
@@ -19,16 +20,7 @@
 %define openjdkchangeset 14181eb6c00d
 %define hotspotchangeset 72a544aeb892
 
-%define accessmajorver 1.23
-%define accessminorver 0
-%define accessver %{accessmajorver}.%{accessminorver}
-%define accessurl http://ftp.gnome.org/pub/GNOME/sources/java-access-bridge/
-
-%define openjdkurl https://java.net/downloads/openjdk6/
-%define openjdkzip  openjdk-6-src-%{openjdkver}-%{openjdkdate}.tar.xz
-
 %define multilib_arches ppc64 sparc64 x86_64
-
 %define jit_arches %{ix86} x86_64 sparcv9 sparc64
 
 %ifarch x86_64
@@ -154,7 +146,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -170,7 +162,7 @@ Group:   Development/Languages
 
 License:  ASL 1.1, ASL 2.0, GPL+, GPLv2, GPLv2 with exceptions, LGPL+, LGPLv2, MPLv1.0, MPLv1.1, Public Domain, W3C
 URL:      http://icedtea.classpath.org/
-Source0:  %{icedteaurl}download/source/icedtea-%{icedteaver}%{icedteasnapshot}.tar.xz
+Source0:  %{icedteaurl}/download/source/icedtea-%{icedteaver}%{icedteasnapshot}.tar.xz
 Source1:  README.src
 Source2:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{openjdkchangeset}.tar.gz
 Source3:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{corbachangeset}.tar.gz
@@ -363,8 +355,9 @@ cp %{SOURCE1} .
   --with-corba-src-zip=%{SOURCE3} --with-jaxp-src-zip=%{SOURCE4} \
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
-  --enable-pulse-java --with-abs-install-dir=%{_jvmdir}/%{sdkdir} %{systemtapopt} \
-  --disable-downloading --with-rhino --enable-nss --enable-system-kerberos
+  --enable-pulse-java --with-abs-install-dir=%{_jvmdir}/%{sdkdir} \
+  --disable-downloading --with-rhino --enable-nss --enable-system-kerberos \
+  --enable-arm32-jit
 
 make %{?_smp_mflags} %{debugbuild}
 
@@ -838,6 +831,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Mar 27 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.4.6-1
+- Remove accessibility and OpenJDK 6 definitions
+- Enable the ARM32 JIT
+
 * Thu Mar 27 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.3.14-1
 - Adapt to 2.3.14
 - Bootstrap using native ecj from gcj, to avoid buggy versions on recent Fedoras
