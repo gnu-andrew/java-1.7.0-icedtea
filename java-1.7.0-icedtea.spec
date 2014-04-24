@@ -6,7 +6,8 @@
 # If debug is 1, a debug build of OpenJDK is performed.
 %define debug 0
 
-%define icedteaver 2.4.7
+%define icedteabranch 2.4
+%define icedteaver %{icedteabranch}.7
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -155,7 +156,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 1%{?dist}
+Release: 2%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -173,13 +174,13 @@ License:  ASL 1.1, ASL 2.0, GPL+, GPLv2, GPLv2 with exceptions, LGPL+, LGPLv2, M
 URL:      http://icedtea.classpath.org/
 Source0:  %{icedteaurl}/download/source/icedtea-%{icedteaver}%{icedteasnapshot}.tar.xz
 Source1:  README.src
-Source2:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{openjdkchangeset}.tar.gz
-Source3:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{corbachangeset}.tar.gz
-Source4:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{jaxpchangeset}.tar.gz
-Source5:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{jaxwschangeset}.tar.gz
-Source6:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{jdkchangeset}.tar.gz
-Source7:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{hotspotchangeset}.tar.gz
-Source8:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteaver}/archive/%{langtoolschangeset}.tar.gz
+Source2:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{openjdkchangeset}.tar.gz
+Source3:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{corbachangeset}.tar.gz
+Source4:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{jaxpchangeset}.tar.gz
+Source5:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{jaxwschangeset}.tar.gz
+Source6:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{jdkchangeset}.tar.gz
+Source7:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{hotspotchangeset}.tar.gz
+Source8:  %{icedteaurl}/hg/release/icedtea7-forest-%{icedteabranch}/archive/%{langtoolschangeset}.tar.gz
 Source9:  ftp://ftp@sourceware.org/pub/java/ecj-4.5.jar
 Source10: %{openjdkurl}/aarch64-port/jdk7u/hotspot/archive/%{aarch64changeset}.tar.gz
 
@@ -847,6 +848,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Apr 24 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.4.7-2
+- Fix IcedTea URLs by splitting branch from full version
+
 * Wed Apr 16 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.4.7-1
 - Update to 2.4.7
 
