@@ -95,6 +95,8 @@
 %else
 %define havegcj 0
 %endif
+%else
+%define havegcj 1
 %endif
 %endif
 
@@ -108,9 +110,9 @@
 
 %if %{bootstrap}
 %if %{havegcj}
-%define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9}
+%define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9} --with-jdk-home=/usr/lib/jvm/java-1.5.0-gcj
 %else
-%define bootstrapopt %{nil}
+%define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.6.0-openjdk
 %endif
 %else
 %define bootstrapopt --disable-bootstrap
@@ -887,6 +889,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Tue Sep 16 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-3
+- Explicitly pass paths to bootstrap JDKs
+- Handle non-Fedora/RHEL builds with havegcj.
+
 * Tue Sep 16 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.2-1
 - Adapt to work on RHEL 7.
 
