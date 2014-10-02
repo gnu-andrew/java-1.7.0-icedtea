@@ -112,7 +112,7 @@
 %if %{havegcj}
 %define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9} --with-jdk-home=/usr/lib/jvm/java-1.5.0-gcj
 %else
-%define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.6.0-openjdk
+%define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.6.0
 %endif
 %else
 %define bootstrapopt --disable-bootstrap
@@ -398,7 +398,7 @@ Provides: java-%{javaver}-javadoc = %{epoch}:%{version}-%{release}
 The OpenJDK API documentation.
 
 %prep
-%setup -q -n icedtea-%{icedteaver}
+%setup -q -n icedtea-%{icedteaver}%{icedteasnapshot}
 
 cp %{SOURCE1} .
 
@@ -889,6 +889,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Tue Sep 16 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-3
+- Use /usr/lib/jvm/java-1.6.0 until java-1.6.0-openjdk is provided (RH1143771)
+- Include icedteasnapshot in tarball extraction name
+
 * Tue Sep 16 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-3
 - Explicitly pass paths to bootstrap JDKs
 - Handle non-Fedora/RHEL builds with havegcj.
