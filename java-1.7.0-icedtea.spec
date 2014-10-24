@@ -9,7 +9,7 @@
 %define debug 0
 
 %define icedteabranch 2.5
-%define icedteaver %{icedteabranch}.2
+%define icedteaver %{icedteabranch}.3
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -17,14 +17,14 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset 06663e4cfbbe
-%define jaxpchangeset d77720c6a36f
-%define jaxwschangeset aac78bd724c4
-%define jdkchangeset 1e6a8564aa34
-%define langtoolschangeset f444e2a77643
-%define openjdkchangeset de1fbcb08558
-%define hotspotchangeset 4ad43b271fd4
-%define aarch64changeset a03843f2ff15
+%define corbachangeset 4aed5efcd8df
+%define jaxpchangeset c903902aadd7
+%define jaxwschangeset d3bef5fd93db
+%define jdkchangeset 6b81c7cc733e
+%define langtoolschangeset a64b8bf851a9
+%define openjdkchangeset 49dc79ef05ab
+%define hotspotchangeset 1d0d98e7c981
+%define aarch64changeset 116bc9da35de
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -210,9 +210,7 @@ Source6:  %{repourl}/jdk.tar.bz2#/jdk-%{jdkchangeset}.tar.bz2
 Source7:  %{repourl}/hotspot.tar.bz2#/hotspot-%{hotspotchangeset}.tar.bz2
 Source8:  %{repourl}/langtools.tar.bz2#/langtools-%{langtoolschangeset}.tar.bz2
 Source9:  ftp://ftp@sourceware.org/pub/java/ecj-4.5.jar
-#Source10: %{dropurl}/aarch64/%{icedteaver}/hotspot.tar.bz2#/aarch64-%{aarch64changeset}.tar.bz2
-#Temporarily hardcoded to 2.5.1
-Source10: %{dropurl}/aarch64/2.5.1/hotspot.tar.bz2#/aarch64-%{aarch64changeset}.tar.bz2
+Source10: %{repourl}/aarch64.tar.bz2#/aarch64-%{aarch64changeset}.tar.bz2
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -889,6 +887,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Oct 24 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.3-2
+- Bump to 2.5.3.
+
 * Tue Sep 16 2014 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-3
 - Use /usr/lib/jvm/java-1.6.0 until java-1.6.0-openjdk is provided (RH1143771)
 - Include icedteasnapshot in tarball extraction name
