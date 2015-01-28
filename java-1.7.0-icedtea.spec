@@ -82,6 +82,8 @@
 %define archinstall %{_arch}
 %endif
 
+# Define havegcj to 1 if the platform has gcj
+# RHEL 5 & 6 do, Fedora prior to version 21 does
 %if 0%{?fedora}
 %if 0%{?fedora} < 21
 %define havegcj 1
@@ -92,11 +94,59 @@
 %if 0%{?rhel}
 %if 0%{?rhel} < 7
 %define havegcj 1
+# Fake native2ascii for RHEL as it isn't included
+%define native2ascii --with-native2ascii=/bin/true
 %else
 %define havegcj 0
 %endif
 %else
 %define havegcj 1
+%endif
+%endif
+
+# Define havelcms2 to 1 if the platform has lcms2
+# All supported Fedoras do as does RHEL 7
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
+%define havelcms2 0
+%else
+%define havelcms2 1
+%endif
+%else
+%define havelcms2 1
+%endif
+
+# Define havasunecnss to 1 if the platform has a
+# version of NSS which can be linked against the Sun EC
+# provider. Support was added in NSS 3.16.1
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
+%define havesunecnss 0
+%else
+%define havesunecnss 1
+%endif
+%else
+%define havesunecnss 1
+%endif
+
+# Define havesplitant to 1 if the platform splits Ant
+# into ant and ant-nodeps packages. This is true of Fedora
+# prior to version 20 and RHEL prior to version 7.
+%if 0%{?fedora}
+%if 0%{?fedora} < 20
+%define havesplitant 1
+%else
+%define havesplitant 0
+%endif
+%else
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
+%define havesplitant 1
+%else
+%define havesplitant 0
+%endif
+%else
+%define havesplitant 0
 %endif
 %endif
 
@@ -110,7 +160,7 @@
 
 %if %{bootstrap}
 %if %{havegcj}
-%define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9} --with-jdk-home=/usr/lib/jvm/java-1.5.0-gcj
+%define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9} --with-jdk-home=/usr/lib/jvm/java-1.5.0-gcj %{native2ascii}
 %else
 %define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.6.0
 %endif
@@ -122,6 +172,23 @@
 %define hotspottarball %{SOURCE10}
 %else
 %define hotspottarball %{SOURCE7}
+%endif
+
+# If with have a SunEC-capable NSS, enable
+# the SunEC provider. Otherwise, use PKCS11
+# for ECC.
+%if %{havesunecnss}
+%define ecopt --enable-sunec
+%else
+%define ecopt --enable-nss
+%endif
+
+# Turn on use of the system LCMS 2 library if
+# available. If not, use the in-tree version.
+%if %{havelcms2}
+%define lcmsopt --enable-system-lcms
+%else
+%define lcmsopt --disable-system-lcms
 %endif
 
 # Convert an absolute path to a relative path.  Each symbolic link is
@@ -184,7 +251,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -230,25 +297,22 @@ BuildRequires: zlib-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: giflib-devel
+%if %{havelcms2}
 BuildRequires: lcms2-devel >= 2.5
+%endif
 BuildRequires: wget
 BuildRequires: xorg-x11-proto-devel
 BuildRequires: ant
-%if 0%{?fedora}
-%if 0%{?fedora} < 20
+%if %{havesplitant}
 BuildRequires: ant-nodeps
-%endif
-%else
-%if 0%{?rhel}
-%if 0%{?rhel} < 7
-BuildRequires: ant-nodeps
-%endif
-%endif
 %endif
 BuildRequires: rhino
 BuildRequires: redhat-lsb
-BuildRequires: nss-devel
+%if %{havesunecnss}
 BuildRequires: nss-softokn-freebl-devel >= 3.16.1
+%else
+BuildRequires: nss-devel
+%endif
 BuildRequires: krb5-devel
 BuildRequires: libattr-devel
 %if %{bootstrap}
@@ -407,9 +471,9 @@ cp %{SOURCE1} .
   --with-corba-src-zip=%{SOURCE3} --with-jaxp-src-zip=%{SOURCE4} \
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{hotspottarball} --with-langtools-src-zip=%{SOURCE8} \
-  --enable-pulse-java --with-abs-install-dir=%{_jvmdir}/%{sdkdir} \
-  --disable-downloading --with-rhino --enable-nss --enable-system-kerberos \
-  --enable-arm32-jit --enable-sunec
+  --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
+  --prefix=%{_jvmdir}/%{sdkdir} --disable-downloading --with-rhino \
+  --enable-system-kerberos --enable-arm32-jit %{ecopt} %{lcmsopt}
 
 make %{?_smp_mflags} %{debugbuild}
 
@@ -887,6 +951,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
+- Add conditional dependencies and build options to allow builds on RHEL 6.
+
 * Wed Jan 28 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-0
 - Bump to 2.5.5pre01.
 
