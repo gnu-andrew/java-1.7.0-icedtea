@@ -34,6 +34,7 @@
 %define jit_arches %{aarch64} %{ix86} x86_64 sparcv9 sparc64 %{power64}
 %define sa_arches %{ix86} x86_64 sparcv9 sparc64
 %define noprelink_arches %{aarch64} %{ppc64le}
+%define no6_arches %{aarch64} %{ppc64le}
 
 %ifarch x86_64
 %define archbuild amd64
@@ -162,10 +163,14 @@
 %if %{havegcj}
 %define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9} --with-jdk-home=/usr/lib/jvm/java-1.5.0-gcj %{native2ascii}
 %else
+%ifarch %{no6_arches}
+%define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.7.0-openjdk
+%else
 %define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.6.0
 %endif
 %else
 %define bootstrapopt --disable-bootstrap
+%endif
 %endif
 
 %ifarch %{aarch64}
@@ -319,7 +324,11 @@ BuildRequires: libattr-devel
 %if %{havegcj}
 BuildRequires: java-1.5.0-gcj-devel
 %else
+%ifarch %{no6_arches}
+BuildRequires: java-1.7.0-openjdk-devel
+%else
 BuildRequires: java-1.6.0-openjdk-devel
+%endif
 %endif
 BuildRequires: libxslt
 %else
@@ -951,6 +960,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
+- Generalise architectures without OpenJDK 6 to no6_arches
+
 * Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
 - Add conditional dependencies and build options to allow builds on RHEL 6.
 
