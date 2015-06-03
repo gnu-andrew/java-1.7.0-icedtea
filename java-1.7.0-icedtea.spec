@@ -320,9 +320,8 @@ BuildRequires: rhino
 BuildRequires: redhat-lsb
 %if %{havesunecnss}
 BuildRequires: nss-softokn-freebl-devel >= 3.16.1
-%else
-BuildRequires: nss-devel
 %endif
+BuildRequires: nss-devel
 BuildRequires: krb5-devel
 BuildRequires: libattr-devel
 %if %{bootstrap}
@@ -965,6 +964,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
+- Always depend on nss-devel as it provides nss.pc
+
 * Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
 - Change no bootstrap JDK to java-1.7.0-openjdk-devel
 
