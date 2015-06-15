@@ -1,19 +1,19 @@
 %define icedteabranch 2.6
 %define icedteaver %{icedteabranch}.0
-%define icedteasnapshot pre22
+%define icedteasnapshot pre23
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset c92957e8516c
-%define jaxpchangeset 8904cf73c048
-%define jaxwschangeset d4de5503ba99
-%define jdkchangeset d17bcae64927
-%define langtoolschangeset a322987c412f
-%define openjdkchangeset 851deec2e741
-%define hotspotchangeset cb42e88f9787
+%define corbachangeset 9d5c92264131
+%define jaxpchangeset 9150a16a7b80
+%define jaxwschangeset 87290096a2fa
+%define jdkchangeset ec336c81a545
+%define langtoolschangeset 403eeedf70f4
+%define openjdkchangeset 88ad67ad5b51
+%define hotspotchangeset 1afefe2d5f90
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -254,7 +254,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 11%{?dist}
+Release: 12%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -955,6 +955,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Jun 15 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-12
+- Update to 2.6.0pre23.
+
 * Tue Jun 09 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-11
 - Update to 2.6.0pre22.
 
