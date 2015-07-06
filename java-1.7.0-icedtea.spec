@@ -1,5 +1,5 @@
 %define icedteabranch 2.5
-%define icedteaver %{icedteabranch}.5
+%define icedteaver %{icedteabranch}.6
 %define icedteasnapshot pre01
 
 %define icedteaurl http://icedtea.classpath.org
@@ -7,14 +7,14 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset e8e7ada7819c
-%define jaxpchangeset 91f042201bb6
-%define jaxwschangeset be14a67897fc
-%define jdkchangeset e1bfd77b6e1a
-%define langtoolschangeset 62af99c4ba80
-%define openjdkchangeset cf5639f1ca27
-%define hotspotchangeset bbda609c9d24
-%define aarch64changeset 4d25046abb67
+%define corbachangeset d4586b6d7058
+%define jaxpchangeset 9f1c230ad1c0
+%define jaxwschangeset 7a5610512bad
+%define jdkchangeset c9edd4f4aee1
+%define langtoolschangeset 2d42dbec0a46
+%define openjdkchangeset abd83c9a9b6a
+%define hotspotchangeset 9b1de9bff274
+%define aarch64changeset 1939c010fd37
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -964,6 +964,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-1
+- Bump to 2.5.6pre01.
+
 * Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
 - Always depend on nss-devel as it provides nss.pc
 
