@@ -261,7 +261,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 1%{?dist}
+Release: 0%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -484,7 +484,6 @@ cp %{SOURCE1} .
   --with-corba-src-zip=%{SOURCE3} --with-jaxp-src-zip=%{SOURCE4} \
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{hotspottarball} --with-langtools-src-zip=%{SOURCE8} \
-  --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
   --prefix=%{_jvmdir}/%{sdkdir} --disable-downloading --with-rhino \
   --enable-system-kerberos --enable-arm32-jit %{ecopt} %{lcmsopt}
 
@@ -964,7 +963,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
-* Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-1
+* Tue Jul 07 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-0
+- Remove duplicate tarball specification line to configure.
+
+* Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-0
 - Bump to 2.5.6pre01.
 
 * Mon Jul 06 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.5-1
