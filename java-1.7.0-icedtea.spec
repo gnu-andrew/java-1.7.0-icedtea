@@ -299,6 +299,10 @@ BuildRequires: zlib-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: giflib-devel
+# Required for smartcard support
+BuildRequires: pcsc-lite-devel
+# Required for SCTP support
+BuildRequires: lksctp-tools-devel
 %if %{havelcms2}
 BuildRequires: lcms2-devel >= 2.5
 %endif
@@ -309,7 +313,7 @@ BuildRequires: ant
 BuildRequires: ant-nodeps
 %endif
 BuildRequires: rhino
-BuildRequires: redhat-lsb
+BuildRequires: redhat-lsb-core
 %if %{havesunecnss}
 BuildRequires: nss-softokn-freebl-devel >= 3.16.1
 %endif
@@ -336,9 +340,6 @@ BuildRequires: gawk
 BuildRequires: libbonobo-devel
 BuildRequires: pkgconfig >= 0.9.0
 BuildRequires: xorg-x11-utils
-# PulseAudio build requirements.
-BuildRequires: pulseaudio-libs-devel >= 0.9.11
-BuildRequires: pulseaudio >= 0.9.11
 # Zero-assembler build requirement.
 %ifnarch %{jit_arches}
 BuildRequires: libffi-devel
@@ -477,7 +478,7 @@ cp %{SOURCE1} .
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
   --prefix=%{_jvmdir}/%{sdkdir} --disable-downloading --with-rhino \
-  --enable-system-kerberos --enable-arm32-jit %{ecopt} %{lcmsopt}
+  %{ecopt} %{lcmsopt}
 
 make %{?_smp_mflags} %{debugbuild}
 
@@ -955,6 +956,12 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Wed Jul 08 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-13
+- Add dependencies on pcsc-lite-devel (PR2496) and lksctp-tools-devel (PR2446).
+- Reduce redhat-lsb dependency to redhat-lsb-core (we only need lsb_release)
+- Drop PulseAudio dependencies; outsourced to IcedTea-Sound in 2.5.0.
+- Drop explicit --enable-x options so we match upstream defaults as closely as possible.
+
 * Wed Jul 08 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-13
 - Update to 2.6.0pre24.
 
