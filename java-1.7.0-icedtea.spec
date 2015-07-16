@@ -1,6 +1,6 @@
 %define icedteabranch 2.6
 %define icedteaver %{icedteabranch}.0
-%define icedteasnapshot pre24
+%define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
@@ -10,7 +10,7 @@
 %define corbachangeset e3445769412d
 %define jaxpchangeset e3b08dc13807
 %define jaxwschangeset 299588405837
-%define jdkchangeset 444d55ffed65
+%define jdkchangeset 2db5e90a399b
 %define langtoolschangeset bc95d2472055
 %define openjdkchangeset dbfa75121aca
 %define hotspotchangeset 94f15794d5e7
@@ -254,7 +254,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 13%{?dist}
+Release: 14%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -956,6 +956,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Jul 16 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-14
+- Update to 2.6.0
+
 * Wed Jul 08 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-13
 - Add dependencies on pcsc-lite-devel (PR2496) and lksctp-tools-devel (PR2446).
 - Reduce redhat-lsb dependency to redhat-lsb-core (we only need lsb_release)
