@@ -365,10 +365,8 @@ BuildRequires: openssl
 %ifnarch %{noprelink_arches}
 BuildRequires: prelink
 %endif
-%ifarch %{jit_arches}
 #systemtap build requirement.
 BuildRequires: systemtap-sdt-devel
-%endif
 
 Requires: fontconfig
 Requires: libjpeg = 6b
@@ -547,6 +545,7 @@ pushd $RPM_BUILD_ROOT%{jvmjardir}
     fi
     ln -sf $jar $(echo $jar | sed "s|-%{version}.jar|.jar|g")
   done
+popd
 
 # Install JCE policy symlinks.
 install -d -m 755 $RPM_BUILD_ROOT%{_jvmprivdir}/%{archname}/jce/vanilla
@@ -923,6 +922,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
+- Sync again with java-1.8.0-icedtea spec file to catch missing popd.
+
 * Fri Jul 17 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
 - Fix desktop-file-install invocation to rename existing installed file
 
