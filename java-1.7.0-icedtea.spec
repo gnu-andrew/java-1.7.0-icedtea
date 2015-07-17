@@ -7,13 +7,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset d4586b6d7058
-%define jaxpchangeset 9f1c230ad1c0
-%define jaxwschangeset 7a5610512bad
-%define jdkchangeset c9edd4f4aee1
-%define langtoolschangeset 2d42dbec0a46
-%define openjdkchangeset abd83c9a9b6a
-%define hotspotchangeset 9b1de9bff274
+%define corbachangeset 85c15dd40753
+%define jaxpchangeset 1ec4219703e9
+%define jaxwschangeset 9ccf5a20c8c3
+%define jdkchangeset cb913465f11d
+%define langtoolschangeset 786c463e408a
+%define openjdkchangeset 0aa744125281
+%define hotspotchangeset a694d681dba7
 %define aarch64changeset 1939c010fd37
 
 %global aarch64 aarch64 arm64 armv8
@@ -261,7 +261,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -963,6 +963,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-1
+- Bump to 2.5.6pre02.
+
 * Tue Jul 07 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-0
 - Remove duplicate tarball specification line to configure.
 
