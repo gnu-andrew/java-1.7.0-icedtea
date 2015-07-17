@@ -1,3 +1,19 @@
+# Copyright (C) 2015 Red Hat, Inc.
+# Written by Andrew John Hughes <gnu.andrew@redhat.com>.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 %define icedteabranch 2.6
 %define icedteaver %{icedteabranch}.0
 %define icedteasnapshot %{nil}
@@ -236,7 +252,6 @@
 %define jvmjardir       %{_jvmjardir}/%{name}-%{version}
 %endif
 
-%ifarch %{jit_arches}
 # Where to install systemtap tapset (links)
 # We would like these to be in a package specific subdir,
 # but currently systemtap doesn't support that, so we have to
@@ -247,14 +262,13 @@
 # aka build_cpu as architecture specific directory name.
 #%define tapsetdir	/usr/share/systemtap/tapset/%{sdkdir}
 %define tapsetdir	/usr/share/systemtap/tapset/%{_build_cpu}
-%endif
 
 # Prevent brp-java-repack-jars from being run.
 %define __jar_repack 0
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 14%{?dist}
+Release: 15%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -473,12 +487,14 @@ cp %{SOURCE1} .
 %build
 
 # Build IcedTea and OpenJDK.
-%configure %{bootstrapopt} --with-openjdk-src-zip=%{SOURCE2} \
+%configure %{bootstrapopt} --prefix=%{_jvmdir}/%{sdkdir} --exec-prefix=%{_jvmdir}/%{sdkdir} \
+  --bindir=%{_jvmdir}/%{sdkdir}/bin --includedir=%{_jvmdir}/%{sdkdir}/include \
+  --docdir=%{_defaultdocdir}/%{name} --mandir=%{_jvmdir}/%{sdkdir}/man \
+  --htmldir=%{_javadocdir}/%{name} --with-openjdk-src-zip=%{SOURCE2} \
   --with-corba-src-zip=%{SOURCE3} --with-jaxp-src-zip=%{SOURCE4} \
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
-  --prefix=%{_jvmdir}/%{sdkdir} --disable-downloading --with-rhino \
-  %{ecopt} %{lcmsopt}
+  --disable-downloading --with-rhino %{ecopt} %{lcmsopt}
 
 make %{?_smp_mflags} %{debugbuild}
 
@@ -492,116 +508,85 @@ export JAVA_HOME=$(pwd)/%{buildoutputdir}/j2sdk-image
 rm -rf $RPM_BUILD_ROOT
 STRIP_KEEP_SYMTAB=libjvm*
 
-pushd %{buildoutputdir}/j2sdk-image
+%make_install
 
-  # Install main files.
-  install -d -m 755 $RPM_BUILD_ROOT%{_jvmdir}/%{sdkdir}
-  cp -a bin include lib src.zip $RPM_BUILD_ROOT%{_jvmdir}/%{sdkdir}
-  install -d -m 755 $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}
-  cp -a jre/bin jre/lib $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}
-
-%ifarch %{jit_arches}
-  # Install systemtap support files.
-  cp -a tapset $RPM_BUILD_ROOT%{_jvmdir}/%{sdkdir}
-  install -d -m 755 $RPM_BUILD_ROOT%{tapsetdir}
-  pushd $RPM_BUILD_ROOT%{tapsetdir}
-    RELATIVE=$(%{abs2rel} %{_jvmdir}/%{sdkdir}/tapset %{tapsetdir})
-    ln -sf $RELATIVE/*.stp .
-  popd
-%endif
-
-  # Install cacerts symlink.
-  rm -f $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/security/cacerts
-  pushd $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/security
-    RELATIVE=$(%{abs2rel} %{_sysconfdir}/pki/java \
-      %{_jvmdir}/%{jredir}/lib/security)
-    ln -sf $RELATIVE/cacerts .
-  popd
-
-  # Install extension symlinks.
-  install -d -m 755 $RPM_BUILD_ROOT%{jvmjardir}
-  pushd $RPM_BUILD_ROOT%{jvmjardir}
-    RELATIVE=$(%{abs2rel} %{_jvmdir}/%{jredir}/lib %{jvmjardir})
-    ln -sf $RELATIVE/jsse.jar jsse-%{version}.jar
-    ln -sf $RELATIVE/jce.jar jce-%{version}.jar
-    ln -sf $RELATIVE/rt.jar jndi-%{version}.jar
-    ln -sf $RELATIVE/rt.jar jndi-ldap-%{version}.jar
-    ln -sf $RELATIVE/rt.jar jndi-cos-%{version}.jar
-    ln -sf $RELATIVE/rt.jar jndi-rmi-%{version}.jar
-    ln -sf $RELATIVE/rt.jar jaas-%{version}.jar
-    ln -sf $RELATIVE/rt.jar jdbc-stdext-%{version}.jar
-    ln -sf jdbc-stdext-%{version}.jar jdbc-stdext-3.0.jar
-    ln -sf $RELATIVE/rt.jar sasl-%{version}.jar
-    for jar in *-%{version}.jar
-    do
-      if [ x%{version} != x%{javaver} ]
-      then
-        ln -sf $jar $(echo $jar | sed "s|-%{version}.jar|-%{javaver}.jar|g")
-      fi
-      ln -sf $jar $(echo $jar | sed "s|-%{version}.jar|.jar|g")
-    done
-  popd
-
-  # Install JCE policy symlinks.
-  install -d -m 755 $RPM_BUILD_ROOT%{_jvmprivdir}/%{archname}/jce/vanilla
-
-  # Install versionless symlinks.
-  pushd $RPM_BUILD_ROOT%{_jvmdir}
-    ln -sf %{jredir} %{jrelnk}
-    ln -sf %{sdkdir} %{sdklnk}
-  popd
-
-  pushd $RPM_BUILD_ROOT%{_jvmjardir}
-    ln -sf %{sdkdir} %{jrelnk}
-    ln -sf %{sdkdir} %{sdklnk}
-  popd
-
-  # Remove javaws man page
-  rm -f man/man1/javaws*
-
-  # Install man pages.
-  install -d -m 755 $RPM_BUILD_ROOT%{_mandir}/man1
-  for manpage in man/man1/*
-  do
-    # Convert man pages to UTF8 encoding.
-    iconv -f ISO_8859-1 -t UTF8 $manpage -o $manpage.tmp
-    mv -f $manpage.tmp $manpage
-    install -m 644 -p $manpage $RPM_BUILD_ROOT%{_mandir}/man1/$(basename \
-      $manpage .1)-%{name}.1
-  done
-
-  # Install demos and samples.
-  cp -a demo $RPM_BUILD_ROOT%{_jvmdir}/%{sdkdir}
-  mkdir -p sample/rmi
-  mv bin/java-rmi.cgi sample/rmi
-  cp -a sample $RPM_BUILD_ROOT%{_jvmdir}/%{sdkdir}
-
-  # Run execstack on libjvm.so.
-  %ifnarch %{noprelink_arches}
-    %ifarch i386 i686
-      execstack -c $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/client/libjvm.so
-    %endif
-  execstack -c $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/server/libjvm.so
-  %endif
-
+# Install systemtap support symlinks.
+install -d -m 755 $RPM_BUILD_ROOT%{tapsetdir}
+pushd $RPM_BUILD_ROOT%{tapsetdir}
+  RELATIVE=$(%{abs2rel} %{_jvmdir}/%{sdkdir}/tapset %{tapsetdir})
+  ln -sf $RELATIVE/*.stp .
 popd
 
-# Install Javadoc documentation.
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}
-cp -a %{buildoutputdir}/docs $RPM_BUILD_ROOT%{_javadocdir}/%{name}
+# Install cacerts symlink.
+rm -f $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/security/cacerts
+pushd $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/security
+  RELATIVE=$(%{abs2rel} %{_sysconfdir}/pki/java \
+    %{_jvmdir}/%{jredir}/lib/security)
+  ln -sf $RELATIVE/cacerts .
+popd
 
-# Install icons and menu entries.
-for s in 16 24 32 48 ; do
-  install -D -p -m 644 \
-    openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
-    $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/${s}x${s}/apps/java.png
+# Install extension symlinks.
+install -d -m 755 $RPM_BUILD_ROOT%{jvmjardir}
+pushd $RPM_BUILD_ROOT%{jvmjardir}
+  RELATIVE=$(%{abs2rel} %{_jvmdir}/%{jredir}/lib %{jvmjardir})
+  ln -sf $RELATIVE/jsse.jar jsse-%{version}.jar
+  ln -sf $RELATIVE/jce.jar jce-%{version}.jar
+  ln -sf $RELATIVE/rt.jar jndi-%{version}.jar
+  ln -sf $RELATIVE/rt.jar jndi-ldap-%{version}.jar
+  ln -sf $RELATIVE/rt.jar jndi-cos-%{version}.jar
+  ln -sf $RELATIVE/rt.jar jndi-rmi-%{version}.jar
+  ln -sf $RELATIVE/rt.jar jaas-%{version}.jar
+  ln -sf $RELATIVE/rt.jar jdbc-stdext-%{version}.jar
+  ln -sf jdbc-stdext-%{version}.jar jdbc-stdext-3.0.jar
+  ln -sf $RELATIVE/rt.jar sasl-%{version}.jar
+  for jar in *-%{version}.jar
+  do
+    if [ x%{version} != x%{javaver} ]
+    then
+      ln -sf $jar $(echo $jar | sed "s|-%{version}.jar|-%{javaver}.jar|g")
+    fi
+    ln -sf $jar $(echo $jar | sed "s|-%{version}.jar|.jar|g")
+  done
+
+# Install JCE policy symlinks.
+install -d -m 755 $RPM_BUILD_ROOT%{_jvmprivdir}/%{archname}/jce/vanilla
+
+# Install versionless symlinks.
+pushd %{buildroot}%{_jvmdir}
+  ln -sf %{jredir} %{jrelnk}
+  ln -sf %{sdkdir} %{sdklnk}
+popd
+
+pushd %{buildroot}%{_jvmjardir}
+  ln -sf %{sdkdir} %{jrelnk}
+  ln -sf %{sdkdir} %{sdklnk}
+popd
+
+# Install man pages.
+install -d -m 755 $RPM_BUILD_ROOT%{_mandir}/man1
+for manpage in %{buildroot}%{_jvmdir}/%{sdkdir}/man/man1/*
+do
+  # Convert man pages to UTF8 encoding.
+  iconv -f ISO_8859-1 -t UTF8 $manpage -o $manpage.tmp
+  mv -f $manpage.tmp $manpage
+  install -m 644 -p $manpage $RPM_BUILD_ROOT%{_mandir}/man1/$(basename $manpage .1)-%{name}.1
 done
+# Delete the man pages installed by IcedTea so RPM doesn't complain
+rm -rf %{buildroot}%{_jvmdir}/%{sdkdir}/man
+
+# Run execstack on libjvm.so.
+%ifnarch %{noprelink_arches}
+  for vms in client server ; do
+    if [ -d $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/${vms} ] ; then
+	execstack -c $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/${vms}/libjvm.so
+    fi ;
+  done
+%endif
 
 # Install desktop files.
-install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/{applications,pixmaps}
 for e in jconsole policytool ; do
     desktop-file-install --vendor=%{name} --mode=644 \
-        --dir=$RPM_BUILD_ROOT%{_datadir}/applications $e.desktop
+        --dir=$RPM_BUILD_ROOT%{_datadir}/applications $e-%{javaver}.desktop
 done
 
 # Find JRE directories.
@@ -852,17 +837,10 @@ exit 0
 
 %files -f %{name}.files
 %defattr(-,root,root,-)
-%doc %{buildoutputdir}/j2sdk-image/jre/ASSEMBLY_EXCEPTION
-%doc %{buildoutputdir}/j2sdk-image/jre/LICENSE
-%doc %{buildoutputdir}/j2sdk-image/jre/THIRD_PARTY_README
-# FIXME: The TRADEMARK file should be in j2sdk-image.
-%doc openjdk/jaxp/TRADEMARK
-%doc AUTHORS
-%doc COPYING
-%doc ChangeLog
-%doc NEWS
-%doc README
+%docdir %{_defaultdocdir}/%{name}
+%{_defaultdocdir}/%{name}
 %dir %{_jvmdir}/%{sdkdir}
+%{_jvmdir}/%{sdkdir}/release
 %{_jvmdir}/%{jrelnk}
 %{_jvmjardir}/%{jrelnk}
 %{_jvmprivdir}/*
@@ -874,7 +852,7 @@ exit 0
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/nss.cfg
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/local_policy.jar
-%{_datadir}/icons/hicolor/*x*/apps/java.png
+%{_datadir}/icons/hicolor/*x*/apps/java-%{javaver}.png
 %{_mandir}/man1/java-%{name}.1*
 %{_mandir}/man1/keytool-%{name}.1*
 %{_mandir}/man1/orbd-%{name}.1*
@@ -887,24 +865,14 @@ exit 0
 
 %files devel
 %defattr(-,root,root,-)
-%doc %{buildoutputdir}/j2sdk-image/ASSEMBLY_EXCEPTION
-%doc %{buildoutputdir}/j2sdk-image/LICENSE
-#%doc %{buildoutputdir}/j2sdk-image/README.html
-%doc %{buildoutputdir}/j2sdk-image/THIRD_PARTY_README
-# FIXME: The TRADEMARK file should be in j2sdk-image.
-%doc openjdk/jaxp/TRADEMARK
 %dir %{_jvmdir}/%{sdkdir}/bin
 %dir %{_jvmdir}/%{sdkdir}/include
 %dir %{_jvmdir}/%{sdkdir}/lib
-%ifarch %{jit_arches}
 %dir %{_jvmdir}/%{sdkdir}/tapset
-%endif
 %{_jvmdir}/%{sdkdir}/bin/*
 %{_jvmdir}/%{sdkdir}/include/*
 %{_jvmdir}/%{sdkdir}/lib/*
-%ifarch %{jit_arches}
 %{_jvmdir}/%{sdkdir}/tapset/*.stp
-%endif
 %{_jvmdir}/%{sdklnk}
 %{_jvmjardir}/%{sdklnk}
 %{_datadir}/applications/*jconsole.desktop
@@ -939,9 +907,7 @@ exit 0
 %{_mandir}/man1/wsgen-%{name}.1*
 %{_mandir}/man1/wsimport-%{name}.1*
 %{_mandir}/man1/xjc-%{name}.1*
-%ifarch %{jit_arches}
 %{tapsetdir}/*.stp
-%endif
 
 %files demo -f %{name}-demo.files
 %defattr(-,root,root,-)
@@ -956,6 +922,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
+- Sync make install usage from java-1.8.0-icedtea spec file.
+
 * Thu Jul 16 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-14
 - Update to 2.6.0
 
