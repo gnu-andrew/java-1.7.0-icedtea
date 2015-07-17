@@ -585,8 +585,9 @@ rm -rf %{buildroot}%{_jvmdir}/%{sdkdir}/man
 
 # Install desktop files.
 for e in jconsole policytool ; do
-    desktop-file-install --vendor=%{name} --mode=644 \
-        --dir=$RPM_BUILD_ROOT%{_datadir}/applications $e-%{javaver}.desktop
+    desktop-file-install --vendor=%{name} --mode=644 --delete-original \
+        --dir=$RPM_BUILD_ROOT%{_datadir}/applications \
+	$RPM_BUILD_ROOT%{_datadir}/applications/$e-%{javaver}.desktop
 done
 
 # Find JRE directories.
@@ -922,6 +923,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 17 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
+- Fix desktop-file-install invocation to rename existing installed file
+
 * Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
 - Sync make install usage from java-1.8.0-icedtea spec file.
 
