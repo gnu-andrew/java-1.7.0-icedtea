@@ -584,9 +584,10 @@ rm -rf %{buildroot}%{_jvmdir}/%{sdkdir}/man
 
 # Install desktop files.
 for e in jconsole policytool ; do
+    mv $RPM_BUILD_ROOT%{_datadir}/applications/$e{-%{javaver},}.desktop
     desktop-file-install --vendor=%{name} --mode=644 --delete-original \
         --dir=$RPM_BUILD_ROOT%{_datadir}/applications \
-	$RPM_BUILD_ROOT%{_datadir}/applications/$e-%{javaver}.desktop
+	$RPM_BUILD_ROOT%{_datadir}/applications/$e.desktop
 done
 
 # Find JRE directories.
@@ -875,8 +876,8 @@ exit 0
 %{_jvmdir}/%{sdkdir}/tapset/*.stp
 %{_jvmdir}/%{sdklnk}
 %{_jvmjardir}/%{sdklnk}
-%{_datadir}/applications/*jconsole.desktop
-%{_datadir}/applications/*policytool.desktop
+%{_datadir}/applications/%{name}-jconsole.desktop
+%{_datadir}/applications/%{name}-policytool.desktop
 %{_mandir}/man1/appletviewer-%{name}.1*
 %{_mandir}/man1/apt-%{name}.1*
 %{_mandir}/man1/extcheck-%{name}.1*
@@ -922,6 +923,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
+- Remove Java version suffix from desktop files as it's duplicated in %%{name}
+
 * Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
 - Sync again with java-1.8.0-icedtea spec file to catch missing popd.
 
