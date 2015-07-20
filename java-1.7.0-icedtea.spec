@@ -1,6 +1,6 @@
 %define icedteabranch 2.5
 %define icedteaver %{icedteabranch}.6
-%define icedteasnapshot pre01
+%define icedteasnapshot pre02
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
@@ -963,6 +963,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 17 2015 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.5.6-1
+- Bump icedteasnapshot.
+
 * Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.5.6-1
 - Bump to 2.5.6pre02.
 
