@@ -14,22 +14,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-%define icedteabranch 2.6
+%define icedteabranch 2.7
 %define icedteaver %{icedteabranch}.0
-%define icedteasnapshot %{nil}
+%define icedteasnapshot pre05
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset e3445769412d
-%define jaxpchangeset e3b08dc13807
-%define jaxwschangeset 299588405837
-%define jdkchangeset 2db5e90a399b
-%define langtoolschangeset bc95d2472055
-%define openjdkchangeset dbfa75121aca
-%define hotspotchangeset 94f15794d5e7
+%define corbachangeset cbe0edb3d345
+%define jaxpchangeset 4b0a1c213416
+%define jaxwschangeset 76aade5c18f8
+%define jdkchangeset 3fc5cbcd46dd
+%define langtoolschangeset caa50dd46a14
+%define openjdkchangeset 7f245987a287
+%define hotspotchangeset 88abb663cdf9
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -268,7 +268,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 15%{?dist}
+Release: 0%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -309,6 +309,7 @@ BuildRequires: libXrender-devel
 BuildRequires: libXau-devel
 BuildRequires: libXdmcp-devel
 BuildRequires: libXinerama-devel
+BuildRequires: libXcomposite-devel
 BuildRequires: zlib-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
@@ -923,6 +924,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Wed Jun 15 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-0
+- Update to 2.7.0pre05.
+- Add build dependency on libXcomposite-devel.
+
 * Fri Jul 17 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.0-15
 - Remove Java version suffix from desktop files as it's duplicated in %%{name}
 
