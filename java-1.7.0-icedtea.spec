@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Red Hat, Inc.
+# Copyright (C) 2016 Red Hat, Inc.
 # Written by Andrew John Hughes <gnu.andrew@redhat.com>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -16,20 +16,20 @@
 
 %define icedteabranch 2.7
 %define icedteaver %{icedteabranch}.0
-%define icedteasnapshot pre05
+%define icedteasnapshot pre06
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset cbe0edb3d345
-%define jaxpchangeset 4b0a1c213416
-%define jaxwschangeset 76aade5c18f8
-%define jdkchangeset 3fc5cbcd46dd
-%define langtoolschangeset caa50dd46a14
-%define openjdkchangeset 7f245987a287
-%define hotspotchangeset 88abb663cdf9
+%define corbachangeset b6bef4d9a428
+%define jaxpchangeset a2cd36a76d22
+%define jaxwschangeset 5c8bb4727c60
+%define jdkchangeset d35404fe9590
+%define langtoolschangeset bd3480b6d64a
+%define openjdkchangeset 05d8ac2f0610
+%define hotspotchangeset 601fbf4bf8c1
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -268,7 +268,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -493,15 +493,15 @@ cp %{SOURCE1} .
   --with-corba-src-zip=%{SOURCE3} --with-jaxp-src-zip=%{SOURCE4} \
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
-  --disable-downloading --with-rhino %{ecopt} %{lcmsopt}
+  --disable-downloading --with-rhino %{ecopt} %{lcmsopt} \
+  --disable-tests --disable-systemtap-tests
 
 make %{?_smp_mflags} %{debugbuild}
 
-%ifarch %{sa_arches}
-chmod 644 $(pwd)/%{buildoutputdir}/j2sdk-image/lib/sa-jdi.jar
-%endif
+%check
 
 export JAVA_HOME=$(pwd)/%{buildoutputdir}/j2sdk-image
+make check
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -924,6 +924,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Jul 28 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-1
+- Update to 2.7.0pre06.
+- Run make check, turning off long-running JTreg tests and broken SystemTap tests.
+
 * Wed Jun 15 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-0
 - Update to 2.7.0pre05.
 - Add build dependency on libXcomposite-devel.
