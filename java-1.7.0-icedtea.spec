@@ -268,7 +268,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 1%{?dist}
+Release: 2%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -373,6 +373,8 @@ Requires: fontconfig
 Requires: libjpeg = 6b
 # Require /etc/pki/java/cacerts.
 Requires: ca-certificates
+# Require /etc/mime.types
+Requires: mailcap
 # Require jpackage-utils for ant.
 Requires: jpackage-utils >= 1.7.3-1jpp.2
 # Require zoneinfo data provided by tzdata-java subpackage.
@@ -924,6 +926,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Jul 28 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-2
+- Depend on mailcap to get system mime.types
+
 * Thu Jul 28 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-1
 - Update to 2.7.0pre06.
 - Run make check, turning off long-running JTreg tests and broken SystemTap tests.
