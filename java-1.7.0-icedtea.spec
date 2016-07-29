@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Red Hat, Inc.
+# Copyright (C) 2016 Red Hat, Inc.
 # Written by Andrew John Hughes <gnu.andrew@redhat.com>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.2
+%define icedteaver %{icedteabranch}.7
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset a4d55c5cec23
-%define jaxpchangeset f1202fb27695
-%define jaxwschangeset 14c411b1183c
-%define jdkchangeset db69ae53157a
-%define langtoolschangeset 73356b81c5c7
-%define openjdkchangeset 601ca7147b8c
-%define hotspotchangeset f40363c11191
+%define corbachangeset e5578d3bc593
+%define jaxpchangeset b643540c673d
+%define jaxwschangeset 4a99f4eac257
+%define jdkchangeset 8b6b930489cb
+%define langtoolschangeset ca9d8b242a10
+%define openjdkchangeset 6aafb6fe0a1e
+%define hotspotchangeset 75297b84957e
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -38,7 +38,6 @@
 %define multilib_arches %{ppc64be} sparc64 x86_64
 %define jit_arches %{aarch64} %{ix86} x86_64 sparcv9 sparc64 %{power64}
 %define sa_arches %{ix86} x86_64 sparcv9 sparc64
-%define noprelink_arches %{aarch64} %{ppc64le}
 %define no6_arches %{aarch64} %{ppc64le}
 %define zero_arches ppc s390 s390x
 
@@ -309,6 +308,7 @@ BuildRequires: libXrender-devel
 BuildRequires: libXau-devel
 BuildRequires: libXdmcp-devel
 BuildRequires: libXinerama-devel
+BuildRequires: libXcomposite-devel
 BuildRequires: zlib-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
@@ -361,10 +361,8 @@ BuildRequires: libffi-devel
 
 # cacerts build requirement.
 BuildRequires: openssl
-# execstack build requirement.
-%ifnarch %{noprelink_arches}
-BuildRequires: prelink
-%endif
+# Require /etc/mime.types
+BuildRequires: mailcap
 #systemtap build requirement.
 BuildRequires: systemtap-sdt-devel
 
@@ -372,6 +370,8 @@ Requires: fontconfig
 Requires: libjpeg = 6b
 # Require /etc/pki/java/cacerts.
 Requires: ca-certificates
+# Require /etc/mime.types
+Requires: mailcap
 # Require jpackage-utils for ant.
 Requires: jpackage-utils >= 1.7.3-1jpp.2
 # Require zoneinfo data provided by tzdata-java subpackage.
@@ -492,15 +492,15 @@ cp %{SOURCE1} .
   --with-corba-src-zip=%{SOURCE3} --with-jaxp-src-zip=%{SOURCE4} \
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
-  --disable-downloading --with-rhino %{ecopt} %{lcmsopt}
+  --disable-downloading --with-rhino %{ecopt} %{lcmsopt} \
+  --disable-tests --disable-systemtap-tests
 
 make %{?_smp_mflags} %{debugbuild}
 
-%ifarch %{sa_arches}
-chmod 644 $(pwd)/%{buildoutputdir}/j2sdk-image/lib/sa-jdi.jar
-%endif
+%check
 
 export JAVA_HOME=$(pwd)/%{buildoutputdir}/j2sdk-image
+make check
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -572,15 +572,6 @@ do
 done
 # Delete the man pages installed by IcedTea so RPM doesn't complain
 rm -rf %{buildroot}%{_jvmdir}/%{sdkdir}/man
-
-# Run execstack on libjvm.so.
-%ifnarch %{noprelink_arches}
-  for vms in client server ; do
-    if [ -d $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/${vms} ] ; then
-	execstack -c $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/${vms}/libjvm.so
-    fi ;
-  done
-%endif
 
 # Install desktop files.
 for e in jconsole policytool ; do
@@ -923,6 +914,13 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Jul 29 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.7-0
+- Update to 2.6.7
+- Add build dependency on libXcomposite-devel for PR2687.
+- Run make check, turning off long-running JTreg tests and broken SystemTap tests.
+- Depend on mailcap to get system mime.types
+- Remove unneeded execstack invocation and prelink dependency.
+
 * Thu Oct 22 2015 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.2-0
 - Update to 2.6.2
 
