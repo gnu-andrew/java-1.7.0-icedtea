@@ -38,7 +38,6 @@
 %define multilib_arches %{ppc64be} sparc64 x86_64
 %define jit_arches %{aarch64} %{ix86} x86_64 sparcv9 sparc64 %{power64}
 %define sa_arches %{ix86} x86_64 sparcv9 sparc64
-%define noprelink_arches %{aarch64} %{ppc64le}
 %define no6_arches %{aarch64} %{ppc64le}
 %define zero_arches ppc s390 s390x
 
@@ -268,7 +267,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 3%{?dist}
+Release: 4%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -362,10 +361,6 @@ BuildRequires: libffi-devel
 
 # cacerts build requirement.
 BuildRequires: openssl
-# execstack build requirement.
-%ifnarch %{noprelink_arches}
-BuildRequires: prelink
-%endif
 #systemtap build requirement.
 BuildRequires: systemtap-sdt-devel
 
@@ -575,15 +570,6 @@ do
 done
 # Delete the man pages installed by IcedTea so RPM doesn't complain
 rm -rf %{buildroot}%{_jvmdir}/%{sdkdir}/man
-
-# Run execstack on libjvm.so.
-%ifnarch %{noprelink_arches}
-  for vms in client server ; do
-    if [ -d $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/${vms} ] ; then
-	execstack -c $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/%{archinstall}/${vms}/libjvm.so
-    fi ;
-  done
-%endif
 
 # Install desktop files.
 for e in jconsole policytool ; do
@@ -926,6 +912,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Sep 30 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.7.0-4
+- Remove unneeded use of execstack and prelink dependency.
+
 * Thu Sep 29 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-3
 - Update to 2.7.0pre07.
 
