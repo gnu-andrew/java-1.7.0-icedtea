@@ -16,20 +16,20 @@
 
 %define icedteabranch 2.7
 %define icedteaver %{icedteabranch}.0
-%define icedteasnapshot pre07
+%define icedteasnapshot pre08
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset 205f6d4b66fe
-%define jaxpchangeset 80897e67a1b3
-%define jaxwschangeset cee876f061b3
-%define jdkchangeset 5e3d7e2b2a00
-%define langtoolschangeset e5b9f24eecf6
-%define openjdkchangeset 0c642b015379
-%define hotspotchangeset b6971126dc0f
+%define corbachangeset 257b4ab13740
+%define jaxpchangeset 36695a562f29
+%define jaxwschangeset 1c02daf6ea6b
+%define jdkchangeset 15b47679f447
+%define langtoolschangeset 5f91109e8834
+%define openjdkchangeset e95e10d502c6
+%define hotspotchangeset c2a745174c84
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -267,7 +267,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 4%{?dist}
+Release: 5%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -912,6 +912,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Oct 27 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-5
+- Update to 2.7.0pre08.
+
 * Fri Sep 30 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.7.0-4
 - Remove unneeded use of execstack and prelink dependency.
 
