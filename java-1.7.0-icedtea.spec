@@ -491,7 +491,7 @@ cp %{SOURCE1} .
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
   --disable-downloading --with-rhino %{ecopt} %{lcmsopt} \
-  --disable-tests --disable-systemtap-tests
+  --disable-tests --disable-systemtap-tests --disable-precompiled-headers
 
 make %{?_smp_mflags} %{debugbuild}
 
@@ -912,6 +912,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Oct 27 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-5
+- Disable pre-compiled headers.
+
 * Thu Oct 27 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-5
 - Update to 2.7.0pre08.
 
