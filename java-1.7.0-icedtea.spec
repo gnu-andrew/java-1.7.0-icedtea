@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.7
+%define icedteaver %{icedteabranch}.8
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset e5578d3bc593
-%define jaxpchangeset b643540c673d
-%define jaxwschangeset 4a99f4eac257
-%define jdkchangeset 8b6b930489cb
-%define langtoolschangeset ca9d8b242a10
-%define openjdkchangeset 6aafb6fe0a1e
-%define hotspotchangeset 75297b84957e
+%define corbachangeset 8bceffc6f67e
+%define jaxpchangeset dfe9f8c968df
+%define jaxwschangeset 6ae901b45031
+%define jdkchangeset 0819886b3679
+%define langtoolschangeset 2e6c46aea99f
+%define openjdkchangeset a1ef40f591be
+%define hotspotchangeset 6b87ff3af68f
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -914,6 +914,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Nov 04 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.8-0
+- Update to 2.6.8pre01.
+
 * Fri Jul 29 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.7-0
 - Update to 2.6.7
 - Add build dependency on libXcomposite-devel for PR2687.
