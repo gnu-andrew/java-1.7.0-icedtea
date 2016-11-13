@@ -16,7 +16,7 @@
 
 %define icedteabranch 2.6
 %define icedteaver %{icedteabranch}.8
-%define icedteasnapshot %{nil}
+%define icedteasnapshot pre01
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
@@ -914,6 +914,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Sun Nov 13 2016 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.8-0
+- Fix icedteasnapshot value (should be pre01).
+
 * Fri Nov 04 2016 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.8-0
 - Update to 2.6.8pre01.
 
