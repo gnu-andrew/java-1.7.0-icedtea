@@ -491,7 +491,8 @@ cp %{SOURCE1} .
   --with-jaxws-src-zip=%{SOURCE5} --with-jdk-src-zip=%{SOURCE6} \
   --with-hotspot-src-zip=%{SOURCE7} --with-langtools-src-zip=%{SOURCE8} \
   --disable-downloading --with-rhino %{ecopt} %{lcmsopt} \
-  --disable-tests --disable-systemtap-tests --disable-precompiled-headers
+  --disable-tests --disable-systemtap-tests --disable-precompiled-headers \
+  --enable-improved-font-rendering
 
 make %{?_smp_mflags} %{debugbuild}
 
@@ -912,6 +913,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Feb 06 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.7.0-6
+- Turn on improved font rendering.
+
 * Mon Feb 06 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-6
 - Update to 2.7.0pre09.
 
