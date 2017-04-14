@@ -865,6 +865,7 @@ exit 0
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/nss.cfg
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/local_policy.jar
+%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/blacklisted.certs
 %{_datadir}/icons/hicolor/*x*/apps/java-%{javaver}.png
 %{_mandir}/man1/java-%{name}.1*
 %{_mandir}/man1/keytool-%{name}.1*
@@ -935,6 +936,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Apr 14 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.9-2
+- Add blacklisted.certs to list of config files.
+
 * Mon Feb 13 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.9-2
 - Update to 2.6.9.
 
