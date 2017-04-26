@@ -94,7 +94,17 @@
 # If bootstrap is 0, OpenJDK is built against
 # java-1.6.0-openjdk-devel.
 %ifarch %{zero_arches}
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
+# RHEL < 7 don't have OpenJDK on the Zero architectures
+# so we must do a full bootstrap
+%define bootstrap 1
+%else
 %define bootstrap 0
+%endif
+%else
+%define bootstrap 1
+%endif
 %else
 %define bootstrap 1
 %endif
@@ -168,6 +178,19 @@
 %else
 %define havesplitant 0
 %endif
+%endif
+
+# Define havegsettings to 1 if the platform has a version of
+# Glib with the GSettings API.  This is true of RHEL from
+# version 7 on.
+%if 0%{?rhel}
+%if 0%{?rhel} < 7
+%define havegsettings 0
+%else
+%define havegsettings 1
+%endif
+%else
+%define havegsettings 1
 %endif
 
 %if %{debug}
@@ -334,6 +357,10 @@ BuildRequires: nss-softokn-freebl-devel >= 3.16.1
 BuildRequires: nss-devel
 BuildRequires: krb5-devel
 BuildRequires: libattr-devel
+%if %{havegsettings}
+%else
+BuildRequires: GConf2-devel
+%endif
 %if %{bootstrap}
 %if %{havegcj}
 BuildRequires: java-1.5.0-gcj-devel
@@ -348,16 +375,12 @@ BuildRequires: libxslt
 %else
 BuildRequires: java-1.7.0-openjdk-devel
 %endif
-# Java Access Bridge for GNOME build requirements.
-BuildRequires: at-spi-devel
-BuildRequires: gawk
-BuildRequires: libbonobo-devel
-BuildRequires: pkgconfig >= 0.9.0
-BuildRequires: xorg-x11-utils
 # Zero-assembler build requirement.
 %ifnarch %{jit_arches}
 BuildRequires: libffi-devel
 %endif
+# Gtk+ look and feel
+BuildRequires: gtk2-devel
 
 # cacerts build requirement.
 BuildRequires: openssl
@@ -374,8 +397,6 @@ Requires: mailcap
 Requires: jpackage-utils >= 1.7.3-1jpp.2
 # Require zoneinfo data provided by tzdata-java subpackage.
 Requires: tzdata-java
-# Gtk+ look and feel
-Requires: gtk2
 # Post requires alternatives to install tool alternatives.
 Requires(post):   %{_sbindir}/alternatives
 # Postun requires alternatives to uninstall tool alternatives.
@@ -843,6 +864,7 @@ exit 0
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/nss.cfg
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/local_policy.jar
+%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/blacklisted.certs
 %{_datadir}/icons/hicolor/*x*/apps/java-%{javaver}.png
 %{_mandir}/man1/java-%{name}.1*
 %{_mandir}/man1/keytool-%{name}.1*
@@ -915,6 +937,13 @@ exit 0
 %changelog
 * Wed Apr 26 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-8
 - Update to 2.7.0pre11.
+
+* Fri Apr 14 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.7.0-7
+- Supporting building on RHEL 6.
+- Remove unnecessary Java AWT bridge dependencies.
+
+* Fri Apr 14 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.7.0-7
+- Add blacklisted.certs to list of config files.
 
 * Fri Apr 14 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-7
 - Update to 2.7.0pre10.
