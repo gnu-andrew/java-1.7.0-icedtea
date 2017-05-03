@@ -15,21 +15,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.9
-%define icedteasnapshot %{nil}
+%define icedteaver %{icedteabranch}.10
+%define icedteasnapshot pre01
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset 737fd3fbf139
-%define jaxpchangeset aa1c302a99fb
-%define jaxwschangeset ea96df8beff4
-%define jdkchangeset ce87b1399385
-%define langtoolschangeset dd8e22d986c8
-%define openjdkchangeset 2dd04ef37829
-%define hotspotchangeset 9fc0d63c2a74
+%define corbachangeset dcdf5b845fa7
+%define jaxpchangeset 82f4cfac52db
+%define jaxwschangeset fc563206c50c
+%define jdkchangeset fb3599f6b861
+%define langtoolschangeset fd8dde40d9dd
+%define openjdkchangeset cd7f56e17866
+%define hotspotchangeset ada095ab78a9
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -290,7 +290,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 2%{?dist}
+Release: 0%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -936,6 +936,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Fri Apr 28 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.10-0
+- Update to 2.6.10pre01.
+
 * Fri Apr 14 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.9-2
 - Add blacklisted.certs to list of config files.
 
