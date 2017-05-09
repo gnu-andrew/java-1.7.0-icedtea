@@ -290,7 +290,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 8%{?dist}
+Release: 9%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -384,6 +384,8 @@ BuildRequires: gtk2-devel
 
 # cacerts build requirement.
 BuildRequires: openssl
+# Require /etc/mime.types
+BuildRequires: mailcap
 #systemtap build requirement.
 BuildRequires: systemtap-sdt-devel
 
@@ -935,6 +937,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Tue May 09 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-9
+- Depend on mailcap at build time to get system mime.types
+
 * Wed Apr 26 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-8
 - Update to 2.7.0pre11.
 
