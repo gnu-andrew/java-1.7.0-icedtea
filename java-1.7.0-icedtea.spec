@@ -38,7 +38,6 @@
 %define multilib_arches %{ppc64be} sparc64 x86_64
 %define jit_arches %{aarch64} %{ix86} x86_64 sparcv9 sparc64 %{power64}
 %define sa_arches %{ix86} x86_64 sparcv9 sparc64
-%define no6_arches %{aarch64} %{ppc64le}
 %define zero_arches ppc s390 s390x
 
 %ifarch x86_64
@@ -205,11 +204,7 @@
 %if %{havegcj}
 %define bootstrapopt --with-gcj --with-ecj-jar=%{SOURCE9} --with-jdk-home=/usr/lib/jvm/java-1.5.0-gcj %{native2ascii}
 %else
-%ifarch %{no6_arches}
 %define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.7.0-openjdk
-%else
-%define bootstrapopt --with-jdk-home=/usr/lib/jvm/java-1.6.0
-%endif
 %endif
 %else
 %define bootstrapopt --disable-bootstrap
@@ -365,11 +360,7 @@ BuildRequires: GConf2-devel
 %if %{havegcj}
 BuildRequires: java-1.5.0-gcj-devel
 %else
-%ifarch %{no6_arches}
 BuildRequires: java-1.7.0-openjdk-devel
-%else
-BuildRequires: java-1.6.0-openjdk-devel
-%endif
 %endif
 BuildRequires: libxslt
 %else
@@ -937,6 +928,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Tue Nov 14 2017 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.7.0-13
+- Remove java-1.6.0-openjdk dependence as it is now obsolete.
+
 * Tue Nov 14 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.7.0-13
 - Update to 2.7.0pre15.
 
