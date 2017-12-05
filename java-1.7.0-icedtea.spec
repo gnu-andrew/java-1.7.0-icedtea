@@ -16,20 +16,20 @@
 
 %define icedteabranch 2.6
 %define icedteaver %{icedteabranch}.12
-%define icedteasnapshot pre01
+%define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
 %define openjdkurl http://hg.openjdk.java.net
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset a7f8705b50f5
-%define jaxpchangeset 968b46df5f0e
-%define jaxwschangeset 3e70a6a17fa9
-%define jdkchangeset 8563ea7f9be7
-%define langtoolschangeset e24f25323b84
-%define openjdkchangeset f53c56dda663
-%define hotspotchangeset 9777e52ab513
+%define corbachangeset e759d9a6a7b2
+%define jaxpchangeset 1981a623381f
+%define jaxwschangeset 40c37fd3e5cb
+%define jdkchangeset a499de02da5a
+%define langtoolschangeset b87dbe0db6aa
+%define openjdkchangeset 7d977b31457d
+%define hotspotchangeset 7fe1098f101e
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -285,7 +285,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -854,8 +854,10 @@ exit 0
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/java.policy
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/java.security
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/nss.cfg
-%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
-%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/local_policy.jar
+%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/policy/unlimited/US_export_policy.jar
+%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/policy/unlimited/local_policy.jar
+%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/policy/limited/US_export_policy.jar
+%config(noreplace) %{_jvmdir}/%{jredir}/lib/security/policy/limited/local_policy.jar
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/blacklisted.certs
 %{_datadir}/icons/hicolor/*x*/apps/java-%{javaver}.png
 %{_mandir}/man1/java-%{name}.1*
@@ -927,10 +929,14 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
-* Mon Nov 20 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.12-1
+* Tue Dec 05 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.12-1
+- Update to 2.6.12.
+- Update location of policy JAR files following 8157561.
+
+* Mon Nov 20 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.12-0
 - Remove java-1.6.0-openjdk dependence as it is now obsolete.
 
-* Mon Nov 20 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.12-1
+* Mon Nov 20 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.12-0
 - Update to 2.6.12pre01.
 
 * Fri Aug 04 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.11-0
