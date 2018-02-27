@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.12
+%define icedteaver %{icedteabranch}.13
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset e759d9a6a7b2
-%define jaxpchangeset 1981a623381f
-%define jaxwschangeset 40c37fd3e5cb
-%define jdkchangeset a499de02da5a
-%define langtoolschangeset b87dbe0db6aa
-%define openjdkchangeset 7d977b31457d
-%define hotspotchangeset 7fe1098f101e
+%define corbachangeset 4b866e7eb48c
+%define jaxpchangeset df965e45dd1f
+%define jaxwschangeset efd5dbb3fe96
+%define jdkchangeset 68b6bb380175
+%define langtoolschangeset e952982cfa00
+%define openjdkchangeset 61245205213a
+%define hotspotchangeset f96baf6b4607
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -285,7 +285,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 1%{?dist}
+Release: 0%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -929,6 +929,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Tue Feb 27 2018 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.13-0
+- Update to 2.6.13.
+
 * Tue Dec 05 2017 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.12-1
 - Update to 2.6.12.
 - Update location of policy JAR files following 8157561.
