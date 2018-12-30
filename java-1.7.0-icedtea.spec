@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.14
+%define icedteaver %{icedteabranch}.15
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset 8931f7345917
-%define jaxpchangeset 71fb2bb2ccdf
-%define jaxwschangeset 46e5171dd4ab
-%define jdkchangeset 581773232054
-%define langtoolschangeset 3633e24edab7
-%define openjdkchangeset 474d8c372eca
-%define hotspotchangeset 56142fb6814b
+%define corbachangeset 9b8ff44cf2c6
+%define jaxpchangeset 5dc90bd920db
+%define jaxwschangeset a88988c07020
+%define jdkchangeset 25542ea9adea
+%define langtoolschangeset 5d348df3700d
+%define openjdkchangeset 02692bca5efc
+%define hotspotchangeset e200fdadc487
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -40,51 +40,53 @@
 %define sa_arches %{ix86} x86_64 sparcv9 sparc64
 %define zero_arches ppc s390 s390x
 
+# In some cases, the arch used by the JDK does
+# not match _arch.
+# Also, in some cases, the machine name used by SystemTap
+# does not match that given by _build_cpu
 %ifarch x86_64
-%define archbuild amd64
-%define archinstall amd64
+%global stapinstall x86_64
 %endif
 %ifarch ppc
-%define archbuild ppc
-%define archinstall ppc
+%global stapinstall powerpc
 %endif
-%ifarch %{power64}
-%define archbuild ppc64
-%define archinstall ppc64
+%ifarch %{ppc64be}
+%global stapinstall powerpc
+%endif
+%ifarch %{ppc64le}
+%global stapinstall powerpc
 %endif
 %ifarch i386
-%define archbuild i586
-%define archinstall i386
+%global stapinstall i386
 %endif
 %ifarch i686
-%define archbuild i586
-%define archinstall i386
+%global stapinstall i386
 %endif
 %ifarch ia64
-%define archbuild ia64
-%define archinstall ia64
+%global stapinstall ia64
 %endif
-%ifarch s390
-%define archbuild s390x
-%define archinstall s390x
+%ifarch s390x
+%global stapinstall s390
+%endif
+%ifarch s390x
+%global stapinstall s390
 %endif
 # 32 bit sparc, optimized for v9
 %ifarch sparcv9
-%define archbuild sparc
-%define archinstall sparc
+%global stapinstall %{_build_cpu}
 %endif
 # 64 bit sparc
 %ifarch sparc64
-%define archbuild sparcv9
-%define archinstall sparcv9
+%global stapinstall %{_build_cpu}
+%endif
+%ifarch %{arm}
+%global stapinstall arm
 %endif
 %ifarch %{aarch64}
-%global archbuild aarch64
-%global archinstall aarch64
+%global stapinstall arm64
 %endif
 %ifnarch %{jit_arches}
-%define archbuild %{_arch}
-%define archinstall %{_arch}
+%global stapinstall %{_build_cpu}
 %endif
 
 # If bootstrap is 1, OpenJDK is bootstrapped against
@@ -277,15 +279,15 @@
 # specific dir (note that systemtap will only pickup the tapset
 # for the primary arch for now). Systemtap uses the machine name
 # aka build_cpu as architecture specific directory name.
-#%define tapsetdir	/usr/share/systemtap/tapset/%{sdkdir}
-%define tapsetdir	/usr/share/systemtap/tapset/%{_build_cpu}
+%global tapsetroot /usr/share/systemtap
+%global tapsetdir %{tapsetroot}/tapset/%{stapinstall}
 
 # Prevent brp-java-repack-jars from being run.
 %define __jar_repack 0
 
 Name:    java-%{javaver}-%{origin}
 Version: %{icedteaver}
-Release: 1%{?dist}
+Release: 0%{?dist}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -519,21 +521,6 @@ rm -rf $RPM_BUILD_ROOT
 STRIP_KEEP_SYMTAB=libjvm*
 
 %make_install
-
-# Install systemtap support symlinks.
-install -d -m 755 $RPM_BUILD_ROOT%{tapsetdir}
-pushd $RPM_BUILD_ROOT%{tapsetdir}
-  RELATIVE=$(%{abs2rel} %{_jvmdir}/%{sdkdir}/tapset %{tapsetdir})
-  ln -sf $RELATIVE/*.stp .
-popd
-
-# Install cacerts symlink.
-rm -f $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/security/cacerts
-pushd $RPM_BUILD_ROOT%{_jvmdir}/%{jredir}/lib/security
-  RELATIVE=$(%{abs2rel} %{_sysconfdir}/pki/java \
-    %{_jvmdir}/%{jredir}/lib/security)
-  ln -sf $RELATIVE/cacerts .
-popd
 
 # Install extension symlinks.
 install -d -m 755 $RPM_BUILD_ROOT%{jvmjardir}
@@ -859,7 +846,7 @@ exit 0
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/policy/limited/US_export_policy.jar
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/policy/limited/local_policy.jar
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/blacklisted.certs
-%{_datadir}/icons/hicolor/*x*/apps/java-%{javaver}.png
+%{_datadir}/icons/hicolor/*x*/apps/java-%{javaver}-openjdk.png
 %{_mandir}/man1/java-%{name}.1*
 %{_mandir}/man1/keytool-%{name}.1*
 %{_mandir}/man1/orbd-%{name}.1*
@@ -929,6 +916,13 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Sun Dec 30 2018 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.15-0
+- Update to 2.6.15.
+- Remove unused archbuild & archinstall and add missing ppc64le & s390 archs.
+- Introduce stapinstall variable to set SystemTap arch directory correctly (e.g. arm64 on aarch64)
+- Remove cacerts and tapset symlink creation now handled by IcedTea's install phase.
+- Add '-openjdk' suffix to icon files, following PR3657.
+
 * Tue May 22 2018 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.14-1
 - Update to 2.6.14.
 
