@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Red Hat, Inc.
+# Copyright (C) 2018 Red Hat, Inc.
 # Written by Andrew John Hughes <gnu.andrew@redhat.com>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -47,9 +47,6 @@
 %ifarch x86_64
 %global stapinstall x86_64
 %endif
-%ifarch ppc
-%global stapinstall powerpc
-%endif
 %ifarch %{ppc64be}
 %global stapinstall powerpc
 %endif
@@ -62,15 +59,6 @@
 %ifarch i686
 %global stapinstall i386
 %endif
-%ifarch ia64
-%global stapinstall ia64
-%endif
-%ifarch s390x
-%global stapinstall s390
-%endif
-%ifarch s390x
-%global stapinstall s390
-%endif
 # 32 bit sparc, optimized for v9
 %ifarch sparcv9
 %global stapinstall %{_build_cpu}
@@ -79,14 +67,26 @@
 %ifarch sparc64
 %global stapinstall %{_build_cpu}
 %endif
-%ifarch %{arm}
-%global stapinstall arm
-%endif
 %ifarch %{aarch64}
 %global stapinstall arm64
 %endif
 %ifnarch %{jit_arches}
 %global stapinstall %{_build_cpu}
+%endif
+%ifarch %{arm}
+%global stapinstall arm
+%endif
+%ifarch ia64
+%global stapinstall ia64
+%endif
+%ifarch ppc
+%global stapinstall powerpc
+%endif
+%ifarch s390
+%global stapinstall s390
+%endif
+%ifarch s390x
+%global stapinstall s390
 %endif
 
 # If bootstrap is 1, OpenJDK is bootstrapped against
@@ -916,6 +916,10 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Mon Dec 31 2018 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.15-0
+- Setup architecture definitions for non-JIT archs after generic no-JIT section so it does not override them.
+- Correct typo where s390x is listed twice, rather than s390 and s390x
+
 * Sun Dec 30 2018 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.15-0
 - Update to 2.6.15.
 - Remove unused archbuild & archinstall and add missing ppc64le & s390 archs.
