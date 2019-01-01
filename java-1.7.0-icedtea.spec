@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.15
+%define icedteaver %{icedteabranch}.16
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset 9b8ff44cf2c6
-%define jaxpchangeset 5dc90bd920db
-%define jaxwschangeset a88988c07020
-%define jdkchangeset 25542ea9adea
-%define langtoolschangeset 5d348df3700d
-%define openjdkchangeset 02692bca5efc
-%define hotspotchangeset e200fdadc487
+%define corbachangeset f6cd5cd93391
+%define jaxpchangeset f331098c637a
+%define jaxwschangeset 234f51a5ed7a
+%define jdkchangeset b624599b602c
+%define langtoolschangeset 1b532e3cc1da
+%define openjdkchangeset d44eff7de671
+%define hotspotchangeset ae6068b02261
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -916,6 +916,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Tue Jan 01 2019 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.16-0
+- Update to 2.6.16.
+
 * Mon Dec 31 2018 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.15-0
 - Setup architecture definitions for non-JIT archs after generic no-JIT section so it does not override them.
 - Correct typo where s390x is listed twice, rather than s390 and s390x
