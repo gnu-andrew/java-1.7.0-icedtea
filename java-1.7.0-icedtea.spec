@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Red Hat, Inc.
+# Copyright (C) 2020 Red Hat, Inc.
 # Written by Andrew John Hughes <gnu.andrew@redhat.com>.
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.20
+%define icedteaver %{icedteabranch}.21
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset 4493de9f3f0b
-%define jaxpchangeset 5e4ceb999239
-%define jaxwschangeset b24931dd91c6
-%define jdkchangeset 89324d11814d
-%define langtoolschangeset 480d3ab02c36
-%define openjdkchangeset b04b11ab5066
-%define hotspotchangeset 8145b03db545
+%define corbachangeset e3f769a410e4
+%define jaxpchangeset 099ed3ab6415
+%define jaxwschangeset c4230372ddc0
+%define jdkchangeset 5cfb0b2d8b78
+%define langtoolschangeset 0581b1282c3e
+%define openjdkchangeset de70c40573f2
+%define hotspotchangeset d89441a9ce98
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -916,6 +916,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Thu Feb 27 2020 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.21-0
+- Update to 2.6.21.
+
 * Fri Nov 15 2019 Andrew John Hughes <gnu.andrew@redhat.com> - 1:2.6.20-0
 - Update to 2.6.20.
 
