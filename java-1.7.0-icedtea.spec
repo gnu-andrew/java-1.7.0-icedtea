@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define icedteabranch 2.6
-%define icedteaver %{icedteabranch}.25
+%define icedteaver %{icedteabranch}.26
 %define icedteasnapshot %{nil}
 
 %define icedteaurl http://icedtea.classpath.org
@@ -23,13 +23,13 @@
 %define dropurl %{icedteaurl}/download/drops
 %define repourl %{dropurl}/icedtea7/%{icedteaver}
 
-%define corbachangeset c52262cf62de
-%define jaxpchangeset 1a519f148114
-%define jaxwschangeset 554eae8a0e5a
-%define jdkchangeset 4b1813281fa9
-%define langtoolschangeset 359498d2d9de
-%define openjdkchangeset 6bfd9fef1b23
-%define hotspotchangeset 12acd094c5a3
+%define corbachangeset dde9e086bd3e
+%define jaxpchangeset 9233ca4cfaf7
+%define jaxwschangeset 7b73c5ffe8b5
+%define jdkchangeset c9a65d8d6245
+%define langtoolschangeset cee6be7fe077
+%define openjdkchangeset be5f0bf9075d
+%define hotspotchangeset 3c3c472c45a0
 
 %global aarch64 aarch64 arm64 armv8
 %global ppc64le	ppc64le
@@ -916,6 +916,9 @@ exit 0
 %doc %{_javadocdir}/%{name}
 
 %changelog
+* Sat Jul 03 2021 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.26-0
+- Update to 2.6.26.
+
 * Fri Feb 12 2021 Andrew Hughes <gnu.andrew@redhat.com> - 1:2.6.25-0
 - Update to 2.6.25.
 
